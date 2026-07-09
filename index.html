@@ -1571,7 +1571,6 @@ function renderEvents() {
       el.style.height = Math.max(4, htPx - 1) + 'px';
       el.style.zIndex = seg.type === 'work' ? '10' : '12';
       el.style.background = hexToRgba(typeColor(seg.type), 0.24);
-      el.style.border = '1px solid ' + hexToRgba(typeColor(seg.type), 0.65);
       el.style.color = readableTextColor(typeColor(seg.type));
       if (htPx < 32) el.classList.add('short');
       if (split) {
