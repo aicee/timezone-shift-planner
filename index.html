@@ -530,26 +530,38 @@
     overflow: hidden;
   }
 
-  /* ── Legend ── */
-  .legend {
-    display: flex; gap: 16px; align-items: center;
-    padding: 8px 16px;
+  /* ── Footer credit ── */
+  .footer-credit {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 6px 16px;
     border-top: 1px solid var(--border);
     background: var(--bg2);
   }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
-  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
-  .legend-dot.green { background: var(--green-light); }
-  .legend-dot.amber { background: var(--amber-light); }
-  .legend-stripe {
-    width: 20px; height: 10px; border-radius: 2px; overflow: hidden; position: relative; background: var(--green);
+  .footer-credit a {
+    color: var(--text3);
+    font-size: 10px;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: color 0.15s ease;
   }
-  .legend-stripe::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: var(--bg3);
-    clip-path: polygon(0 0, 100% 0, 0 100%);
+  .footer-credit a:hover,
+  .footer-credit a:focus-visible {
+    color: var(--text2);
+  }
+  .cursor-blink {
+    display: inline-block;
+    animation: blink 1s steps(1, end) infinite;
+  }
+  @keyframes blink {
+    0%, 45% { opacity: 1; }
+    46%, 100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-blink {
+      animation: none;
+    }
   }
 
   /* ── Modal ── */
@@ -721,7 +733,7 @@
     .leave-legend-chip .leave-chip-short { display: none; }
     #month-grid div { font-size: 10px !important; padding: 5px 0 !important; letter-spacing: 1px !important; }
     #month-view > div:first-child { margin-bottom: 8px; }
-    .legend { overflow-x:auto; white-space:nowrap; }
+    .footer-credit { padding-inline: 12px; }
     .modal { width: 94vw; padding: 16px; }
     .form-inline { flex-direction: column; gap: 0; }
     .cal-event { padding: 3px 4px; }
@@ -859,12 +871,9 @@
         </div>
       </div>
     </div>
-    <div class="legend">
-      <span style="font-size:11px; color:var(--text3);">Legend:</span>
-      <div class="legend-item"><div class="legend-dot green"></div> Work</div>
-      <div class="legend-item"><div class="legend-dot amber"></div> Break</div>
-      <div class="legend-item"><div class="legend-stripe"></div> Half-hour boundary</div>
-    </div>
+    <footer class="footer-credit">
+      <a href="https://aicee.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Built and maintained by Aicee. Opens portfolio site in a new tab.">built and maintained by aicee<span class="cursor-blink">_</span></a>
+    </footer>
   </div>
 </div>
 
