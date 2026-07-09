@@ -154,21 +154,47 @@
   .form-inline .form-row { flex: 1; }
   .backup-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 110px));
+    justify-content: center;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 10px;
   }
   .btn-mini {
     background: rgba(88,166,255,0.08);
     border: 1px solid rgba(88,166,255,0.25);
     color: var(--accent);
-    padding: 6px 8px;
+    padding: 4px 8px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
   }
   .btn-mini:hover { background: rgba(88,166,255,0.14); }
+  .shared-event-meta {
+    position: absolute;
+    z-index: 3;
+    max-width: 62%;
+    pointer-events: none;
+  }
+  .shared-event-meta.end { top: 4px; left: 4px; text-align: left; }
+  .shared-event-meta.start { right: 4px; bottom: 4px; text-align: right; }
+  .shared-event-title {
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .shared-event-time {
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 1.2;
+    opacity: 0.8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .privacy-note, .form-message {
     font-size: 11px;
     color: var(--text2);
@@ -793,12 +819,6 @@
       </div>
       <button class="btn-submit" id="btn-save-event">Add to schedule</button>
       <div id="form-error" style="color:#f85149;font-size:12px;margin-top:6px;display:none;"></div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-title">Leave & day status</div>
-      <button class="btn-submit btn-secondary" id="btn-open-leave">Add leave / day status</button>
-      <p class="privacy-note">Mark one date or a range as requested, approved, or declined.</p>
     </div>
 
     <div class="scrollable-sidebar">
@@ -1600,8 +1620,12 @@ function renderEvents() {
       const topPx = (hf / 60) * CH;
 
       const cell = document.createElement('div');
+      cell.className = 'shared-cell';
       cell.style.cssText = 'position:absolute;left:2px;right:2px;top:' + (topPx - 1) + 'px;height:' + (CH + 1) + 'px;' +
         'overflow:hidden;z-index:11;cursor:pointer;';
+      const endLabel   = endSeg.label || typeName(endSeg.type);
+      const endTime    = endSeg.phStart + '-' + endSeg.phEnd;
+      const endColor   = readableTextColor(typeColor(endSeg.type));
       const startLabel = startSeg.label || typeName(startSeg.type);
       const startTime  = startSeg.phStart + '-' + startSeg.phEnd;
       const startColor = readableTextColor(typeColor(startSeg.type));
@@ -1610,9 +1634,13 @@ function renderEvents() {
         '<div style="position:absolute;inset:0;background:' + c1 + ';clip-path:polygon(0 0,100% 0,0 100%);"></div>' +
         '<div style="position:absolute;top:0;left:0;right:0;height:1px;background:rgba(255,255,255,0.2);z-index:3;pointer-events:none;"></div>' +
         '<div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(255,255,255,0.2);z-index:3;pointer-events:none;"></div>' +
-        '<div style="position:absolute;bottom:4px;right:4px;z-index:3;pointer-events:none;text-align:right;">' +
-          '<div style="font-size:11px;font-weight:600;color:' + startColor + ';">' + escapeHtml(startLabel) + '</div>' +
-          '<div style="font-family:JetBrains Mono,monospace;font-size:10px;opacity:0.8;color:' + startColor + ';">' + escapeHtml(startTime) + '</div>' +
+        '<div class="shared-event-meta end">' +
+          '<div class="shared-event-title" style="color:' + endColor + ';">' + escapeHtml(endLabel) + '</div>' +
+          '<div class="shared-event-time" style="color:' + endColor + ';">' + escapeHtml(endTime) + '</div>' +
+        '</div>' +
+        '<div class="shared-event-meta start">' +
+          '<div class="shared-event-title" style="color:' + startColor + ';">' + escapeHtml(startLabel) + '</div>' +
+          '<div class="shared-event-time" style="color:' + startColor + ';">' + escapeHtml(startTime) + '</div>' +
         '</div>';
 
       cell.addEventListener('click', function() { openModal(endSeg.ev); });
@@ -2095,7 +2123,6 @@ function renderMonth() {
 
 document.getElementById('prev-month').addEventListener('click', function() { currentMonthOffset--; renderMonth(); });
 document.getElementById('next-month').addEventListener('click', function() { currentMonthOffset++; renderMonth(); });
-document.getElementById('btn-open-leave').addEventListener('click', () => openLeaveModal());
 document.getElementById('btn-open-leave-month').addEventListener('click', () => openLeaveModal());
 document.getElementById('leave-close').addEventListener('click', () => { document.getElementById('leave-modal').style.display = 'none'; });
 document.getElementById('leave-start').addEventListener('change', e => renderLeaveDetails(e.target.value));
