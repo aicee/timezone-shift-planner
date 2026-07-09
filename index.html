@@ -71,17 +71,7 @@
     font-size: 14px;
   }
   .brand-name { font-weight: 600; font-size: 15px; color: var(--text); letter-spacing: 0; }
-  .brand-sub { font-size: 11px; color: var(--text2); margin-left: 2px; }
   .header-right { display: flex; align-items: center; gap: 8px; }
-  .tz-pill {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    padding: 3px 10px;
-    background: var(--accent-dim);
-    border: 1px solid rgba(88,166,255,0.25);
-    border-radius: 20px;
-    color: var(--accent);
-  }
   .week-nav { display: flex; align-items: center; gap: 6px; }
   .week-nav button {
     background: var(--bg3);
@@ -170,6 +160,34 @@
     font-weight: 600;
   }
   .btn-mini:hover { background: rgba(88,166,255,0.14); }
+  .sidebar > .sidebar-section {
+    padding: 10px 12px;
+  }
+  .sidebar > .sidebar-section .sidebar-title {
+    margin-bottom: 6px;
+  }
+  .sidebar > .sidebar-section .form-row {
+    margin-bottom: 5px;
+  }
+  .sidebar > .sidebar-section .form-row input,
+  .sidebar > .sidebar-section .form-row select {
+    padding: 4px 8px;
+  }
+  .sidebar > .sidebar-section .privacy-note {
+    margin-top: 6px;
+    line-height: 1.35;
+  }
+  .sidebar > .sidebar-section .backup-actions {
+    margin-top: 7px;
+  }
+  .sidebar > .sidebar-section .day-pill {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  .sidebar > .sidebar-section .btn-submit {
+    padding: 6px;
+    margin-top: 2px;
+  }
   .shared-event-meta {
     position: absolute;
     z-index: 3;
@@ -629,8 +647,6 @@
     .header { padding: 0 10px; height: auto; min-height: 48px; flex-wrap: wrap; gap: 4px; padding-top: 6px; padding-bottom: 6px; }
     .brand { display: none; }
     .header-right { width: 100%; justify-content: flex-end; gap: 8px; }
-    .tz-pill { font-size: 10px; padding: 2px 7px; }
-    .header-right .tz-pill { margin-right: auto; }
     .week-nav { gap: 4px; }
     .week-label { font-size: 11px; min-width: 70px; white-space: normal; text-align: center; line-height: 1.3; }
     .view-toggle { margin-left: 0; }
@@ -719,11 +735,9 @@
     <div class="brand-icon">⇄</div>
     <div>
       <span class="brand-name">Timezone Shift Planner</span>
-      <span class="brand-sub"> local schedule view</span>
     </div>
   </div>
   <div class="header-right">
-    <div class="tz-pill" id="tz-display">LT → PH</div>
     <div class="week-nav">
       <button id="prev-week" title="Previous week">&#8249;</button>
       <span class="week-label" id="week-label"></span>
@@ -782,15 +796,15 @@
       <div class="sidebar-title">Add shift block</div>
       <div class="form-row">
         <label>Day of week</label>
-        <div id="inp-day-pills" style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;gap:5px;">
+        <div id="inp-day-pills" style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;gap:4px;">
             <button type="button" class="day-pill" data-day="0">Mon</button>
             <button type="button" class="day-pill" data-day="1">Tue</button>
             <button type="button" class="day-pill" data-day="2">Wed</button>
             <button type="button" class="day-pill" data-day="3">Thu</button>
             <button type="button" class="day-pill" data-day="4">Fri</button>
           </div>
-          <div style="display:flex;gap:5px;">
+          <div style="display:flex;gap:4px;">
             <button type="button" class="day-pill" data-day="5">Sat</button>
             <button type="button" class="day-pill" data-day="6">Sun</button>
           </div>
@@ -834,7 +848,6 @@
         <div class="cal-header" id="cal-header">
           <div class="cal-header-inner">
             <div class="cal-time-gutter" style="padding:10px 8px 8px; font-size:10px; color:var(--text3); text-align:right;">
-              <div id="src-tz-label" style="margin-bottom:2px;"></div>
               <div id="tgt-tz-label" style="color:var(--accent);"></div>
             </div>
             <div class="day-headers" id="day-headers"></div>
@@ -1322,11 +1335,8 @@ function renderHeader() {
   document.getElementById('week-label').textContent = `${formatDate(ws)} – ${formatDate(we)}`;
 
   const { src, tgt } = getSettings();
-  const srcLabel = cityLabel(src);
   const tgtLabel = cityLabel(tgt);
-  document.getElementById('src-tz-label').textContent = 'Source: ' + srcLabel;
   document.getElementById('tgt-tz-label').textContent = 'Local: ' + tgtLabel;
-  document.getElementById('tz-display').textContent = `${srcLabel} → ${tgtLabel}`;
   document.getElementById('start-label').textContent = 'Start (' + shortTzLabel(src) + ')';
   document.getElementById('end-label').textContent = 'End (' + shortTzLabel(src) + ')';
 
