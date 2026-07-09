@@ -1538,6 +1538,7 @@ function renderEvents() {
         }
       }
     }
+    const labeledSegs = new Set();
 
     cs.forEach(function(seg, idx) {
       const { split, side } = assigned[idx];
@@ -1594,6 +1595,7 @@ function renderEvents() {
       // If startsAtShared, the shared cell at hourFloorOfTop shows this seg's label
       const showLabel = !seg.isOverflow && seg.label && !startsAtShared;
       if (showLabel) {
+        labeledSegs.add(seg);
         inner = '<div class="ev-title" style="position:relative;z-index:3;text-align:right;">' + escapeHtml(seg.label) + '</div>' +
                 '<div class="ev-time"  style="position:relative;z-index:3;text-align:right;">' + escapeHtml(seg.phStart + '-' + seg.phEnd) + '</div>' +
                 inner;
@@ -1619,7 +1621,7 @@ function renderEvents() {
     });
 
     // Render shared transition cells — dual-color diagonal
-    sharedHours.forEach(function(hf) {
+    [...sharedHours].sort((a, b) => a - b).forEach(function(hf) {
       // Find which seg ends here and which starts here
       const endSeg   = cs.find(s => s.wBot && Math.floor(s.botMin / 60) * 60 === hf);
       const startSeg = cs.find(s => s.wTop && Math.floor(s.topMin / 60) * 60 === hf);
@@ -1636,6 +1638,11 @@ function renderEvents() {
       const endLabel   = endSeg.label || typeName(endSeg.type);
       const endTime    = endSeg.phStart + '-' + endSeg.phEnd;
       const endColor   = readableTextColor(typeColor(endSeg.type));
+      const endMeta    = labeledSegs.has(endSeg) ? '' :
+        '<div class="shared-event-meta end">' +
+          '<div class="shared-event-title" style="color:' + endColor + ';">' + escapeHtml(endLabel) + '</div>' +
+          '<div class="shared-event-time" style="color:' + endColor + ';">' + escapeHtml(endTime) + '</div>' +
+        '</div>';
       const startLabel = startSeg.label || typeName(startSeg.type);
       const startTime  = startSeg.phStart + '-' + startSeg.phEnd;
       const startColor = readableTextColor(typeColor(startSeg.type));
@@ -1644,14 +1651,12 @@ function renderEvents() {
         '<div style="position:absolute;inset:0;background:' + c1 + ';clip-path:polygon(0 0,100% 0,0 100%);"></div>' +
         '<div style="position:absolute;top:0;left:0;right:0;height:1px;background:rgba(255,255,255,0.2);z-index:3;pointer-events:none;"></div>' +
         '<div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(255,255,255,0.2);z-index:3;pointer-events:none;"></div>' +
-        '<div class="shared-event-meta end">' +
-          '<div class="shared-event-title" style="color:' + endColor + ';">' + escapeHtml(endLabel) + '</div>' +
-          '<div class="shared-event-time" style="color:' + endColor + ';">' + escapeHtml(endTime) + '</div>' +
-        '</div>' +
+        endMeta +
         '<div class="shared-event-meta start">' +
           '<div class="shared-event-title" style="color:' + startColor + ';">' + escapeHtml(startLabel) + '</div>' +
           '<div class="shared-event-time" style="color:' + startColor + ';">' + escapeHtml(startTime) + '</div>' +
         '</div>';
+      labeledSegs.add(startSeg);
 
       cell.addEventListener('click', function() { openModal(endSeg.ev); });
       lane.appendChild(cell);
